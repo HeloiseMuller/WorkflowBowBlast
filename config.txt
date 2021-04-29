@@ -1,0 +1,28 @@
+#Directory of the project
+dir=/mnt/65To/Heloise/ResistantCaterpillars
+
+#Name of the run of Illumina
+runIlumina=X204SC21021499-Z01-F001
+
+#Name of the sample
+sample=SR2
+
+#Reference genome of the sample
+path_species=/mnt/65To/Heloise/ref/ 
+species=SNONA #no dot in species name
+
+#Reference species of a second species
+path_species2=/mnt/65To/Heloise/ref/Ctyphae.fa #Comment if does not need it
+species2=Ctyphae #no dot i species name
+
+#Scripts to run
+integrity=TRUE
+trimmomatic=FALSE
+bowtie2=TRUE
+blastn=TRUE
+
+#Number of threads to use (even number)
+threads=20
+
+
+#Path of software to run

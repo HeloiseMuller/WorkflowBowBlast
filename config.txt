@@ -16,11 +16,11 @@ path_species2=/mnt/65To/Heloise/ref/Ctyphae.fa #Comment if does not need it
 species2=Ctyphae #no dot i species name
 
 #Scripts to run
-integrity=TRUE
-trimmomatic=FALSE
-bowtie2=TRUE
-blastn=TRUE
-parallel=TRUE
+integrity=FALSE
+trimmomatic=TRUE
+bowtie2=FALSE
+blastn=FALSE
+parallel=FALSE
 
 #Number of threads to use (even number)
 threads=20

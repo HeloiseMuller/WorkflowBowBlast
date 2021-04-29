@@ -28,9 +28,8 @@ then
 	mkdir -p $dir/trimmed_data
 	java -jar /opt/Trimmomatic-0.38/trimmomatic-0.38.jar PE \
 			-threads $threads -trimlog $dir/trimmed_data/${sample}_trimmings.log \
-			-basein $dir/$runIllumina/raw_data/${sample}*1.fq.gz \
+			-basein $dir/$runIlumina/raw_data/$sample/*1.fq.gz \
 			-baseout $dir/trimmed_data/${sample}_trimmed.fq.gz \
-			ILLUMINACLIP:$dir/trimmed_data/adapters.fa:2:30:10 \
 			LEADING:20 TRAILING:20 \
 			SLIDINGWINDOW:4:15 \
 			MINLEN:36

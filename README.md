@@ -55,21 +55,21 @@ threads=20
 
 `runIlumina=X204SC2102112-Z02-G001` is the name of the Illumina run. It needs to be in `$dir`. The raw Illumina reads needs to be organized as follow: `$dir/$runIlumina/raw_data/`
 
-`sample=data` is the name of the sample on which one wants to run the workflow. The fq.gz files need to begin with `sample` and to not contains any dots.
+`sample=data` is the name of the sample on which one wants to run the workflow. The fq.gz files need to begin with `sample` and it cannot contain any dots.
 
 `path_species=/home/user/ref/genome1.fasta` is the path of the reference genome of the Illumina reads. The name of the species used in the outputs is `$species`. `$species` cannot contains any dots
 
 `path_species2=/home/user/ref/genome2.fasta` is the path of a reference genome of another species of interest. The name of this other species used in the outputs is `$species2`. `$species2` cannot contains any dots. This second species should be used if one wants to look for chimeric reads between `$species` and `$species2`. If not, comment these options.
 
-`integrity`, `trimmomatic`, `bowtie2` and `blastn` are the tools WorkflowBowBlast can run. They are detailed with more details thereafter. Set TRUE to run, FALSE to ignore them. 
+`integrity`, `trimmomatic`, `bowtie2` and `blastn` are the tools WorkflowBowBlast can run. They are detailed with more details thereafter. Set TRUE to run, FALSE to ignore them. `parallele=TRUE` allows WorkflowBowBlast to run bowtie2 and blastn at the same time.
 
-`threads=20` set the total number of threads to use. If `bowtie2=TRUE` and `blastn=TRUE`, `threads` will be split between them since they run at the same time.
+`threads=20` set the total number of threads to use. If `bowtie2=TRUE` and `blastn=TRUE`, `threads` will be split between them if they run at the same time.
 
 ## Steps of the workflow
 
 ### Integrity
 
-This option calclute the md5 of the raw sequencing reads and run fastqc
+This option calculate the md5 of the raw sequencing reads and run fastqc
 
 ### Trimmomatic
 

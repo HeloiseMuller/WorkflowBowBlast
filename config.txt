@@ -20,6 +20,7 @@ integrity=TRUE
 trimmomatic=FALSE
 bowtie2=TRUE
 blastn=TRUE
+parallel=TRUE
 
 #Number of threads to use (even number)
 threads=20

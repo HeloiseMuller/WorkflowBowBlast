@@ -11,26 +11,39 @@ function func_process_fasta {
 }
 
 function func_blastn {
-	#Blastn on the second species first (because the output will be smaller)
-	echo -e "\nblastn of ${sample} on ${species2}"
-	blastn -query $dir/trimmed_data/${sample}_trimmed_cat.fasta \
-		-db $path_species2 \
-                -outfmt 6 \
-                -max_target_seqs 2 \
-                -out $dir/blastn/${sample}_vs_${species2}.txt \
-                -num_threads ${threads_blastn}
+
+	#If species2 is not specified, map all the reads on species
+	if [  -z $species2 ];
+	then
+		echo -e "\nblastn of all the reads of ${sample} on ${species}"
+        	blastn -query $dir/trimmed_data/${sample}_trimmed_cat.fasta \
+                	-db $path_species \
+                	-outfmt 6 \
+                	-max_target_seqs 2 \
+                	-out $dir/blastn/${sample}_vs_${species}.txt \
+                	-num_threads ${threads_blastn}
+	else
+		#If species2 isspecified, map on species2 first, then take only the reads that mapped to map on species
+		echo -e "\nblastn of all the reads of ${sample} on ${species2}"
+		blastn -query $dir/trimmed_data/${sample}_trimmed_cat.fasta \
+			-db $path_species2 \
+                	-outfmt 6 \
+                	-max_target_seqs 2 \
+                	-out $dir/blastn/${sample}_vs_${species2}.txt \
+                	-num_threads ${threads_blastn}
 
 		#extract 1st colomn where name sequences to keep | keep each read once
 		cut -f1 $dir/blastn/${sample}_vs_${species2}.txt | uniq > $dir/blastn/${sample}_vs_${species2}.lst
 		#make fasta in which keep only reads that blasted against species2
 		seqtk subseq $dir/trimmed_data/${sample}_trimmed_cat.fasta $dir/blastn/${sample}_vs_${species2}.lst > $dir/blastn/${sample}_trimmed_vs_${species2}.fasta
-		echo -e "\nblastn of ${sample} on ${species}"
+		echo -e "\nblastn of the reads of ${sample} that mapped on ${species} on ${species}"
 		blastn -query $dir/blastn/${sample}_trimmed_vs_${species2}.fasta \
 			-db $path_species \
 			-outfmt 6 \
 			-max_target_seqs 2 \
 			-out $dir/blastn/${sample}_trimmed_vs_${species2}_vs_${species}.txt \
 			-num_threads ${threads_blastn}
+	fi
 
 }
 

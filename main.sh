@@ -36,17 +36,15 @@ then
 			MINLEN:36
 fi
 
-#Split threads between bowtie2 and blastn if use both
-if [ $bowtie2 = TRUE ] &&  [ $blastn = TRUE ];
-then    
-        threads_bowtie2=`expr $threads / 2`
-        threads_blastn=`expr $threads / 2`
-elif [ $bowtie2 = TRUE ] && [ $blastn = FALSE ];
+#Split threads between bowtie2 and blastn if use parallel
+if [ $parallel = TRUE ] && [ $bowtie2 = TRUE ] &&  [ $blastn = TRUE ];
 then
-        threads_bowtie2=$threads
+	threads_bowtie2=`expr $threads / 2`
+        threads_blastn=`expr $threads / 2`	
 else
-        threads_blastn=$threads
-fi 
+	threads_bowtie2=$threads
+	threads_blastn=$threads
+fi
 
 
 #Run bowtie2 if needed
@@ -54,7 +52,12 @@ if [ $bowtie2 = TRUE ];
 then
 	mkdir -p $dir/Coverage
 	func_bowtie2 & PIDbowtie2=$!
+	if [ $parallel = FALSE ];
+	then    
+	        wait $PIDbowtie2
+	fi
 fi
+
 
 #Run blastn if needed
 if [ $blastn = TRUE ];
@@ -89,4 +92,5 @@ then
 
 fi
 
+wait $PIDbowtie2 $PIDblastn
 echo -e "\nEnd of the workflow"

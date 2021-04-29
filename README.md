@@ -81,6 +81,6 @@ This option runs bowtie2 on the trimmed reads against `genome`. If `genome2` is 
 
 ### Blastn
 
-This option is ran at the same time as bowtie2 if both are set on TRUE.
-It firslty processes the trimmed fq.gz to obtain a fasta file. If `genome2` is specified, blastn is ran on the fasta file against this `genome2`. Then, only reads that mapped on `genome2` are mapped on `genome1`. If `genome2` is commented, all reads of the fasta file are mapped on `genome1`.
+This option can be ran at the same time as bowtie2 if `parallele=TRUE`. In this case, `threads` will be equally shared between blastn and bowtie2.
+This option firslty processes the trimmed fq.gz to obtain a fasta file. If `genome2` is specified, blastn is ran on the fasta file against this `genome2`. Then, only reads that mapped on `genome2` are mapped on `genome1`. If `genome2` is commented, all reads of the fasta file are mapped on `genome1`.
 

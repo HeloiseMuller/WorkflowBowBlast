@@ -65,4 +65,22 @@ threads=20
 
 `threads=20` set the total number of threads to use. If `bowtie2=TRUE` and `blastn=TRUE`, `threads` will be split between them since they run at the same time.
 
+## Steps of the workflow
+
+### Integrity
+
+This option calclute the md5 of the raw sequencing reads and run fastqc
+
+### Trimmomatic
+
+This option runs trimmomatic on the raw sequencing reads. For the following, one needs trimmed reads, so set `trimmomatic=TRUE`. If trimmomatic has alrady been ran, one can set `trimmomatic=FALSE` but check that the file names are as follow: `$sample_trimmed.1P.fq.gz`
+
+### Bowtie2
+
+This option runs bowtie2 on the trimmed reads agaisnt `genome`. If `genome2` is specified, it also run bowtie2 on this genome independently. After bowtie2, the resulting sam files are turn into sorted bam files and merged together. bedtools genomecov is then run in order to get the coverage at each position of `genome` and `genome2` if specified.
+
+### Blastn
+
+This option is ran at the same time as bowtie2 if both are set on TRUE.
+It processes the trimmed fq.gz to obtain a fasta file. If `genome2` is specified, blastn is ran on the fasta file agaisnt this `genome2`. Then, only reads that mapped on `genome2` are mapped on `genome1`. If `genome2` is commented, all reads of the fasta file are mapped on `genome1`.
 

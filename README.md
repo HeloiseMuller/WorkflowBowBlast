@@ -77,10 +77,10 @@ This option runs trimmomatic on the raw sequencing reads. For the following, one
 
 ### Bowtie2
 
-This option runs bowtie2 on the trimmed reads agaisnt `genome`. If `genome2` is specified, it also run bowtie2 on this genome independently. After bowtie2, the resulting sam files are turn into sorted bam files and merged together. bedtools genomecov is then run in order to get the coverage at each position of `genome` and `genome2` if specified.
+This option runs bowtie2 on the trimmed reads against `genome`. If `genome2` is specified, it also run bowtie2 on this genome independently. After bowtie2, the resulting sam files are turn into sorted bam files and merged together. Bedtools genomecov is then ran in order to get the coverage at each position of `genome` and `genome2`, if specified.
 
 ### Blastn
 
 This option is ran at the same time as bowtie2 if both are set on TRUE.
-It processes the trimmed fq.gz to obtain a fasta file. If `genome2` is specified, blastn is ran on the fasta file agaisnt this `genome2`. Then, only reads that mapped on `genome2` are mapped on `genome1`. If `genome2` is commented, all reads of the fasta file are mapped on `genome1`.
+It firslty processes the trimmed fq.gz to obtain a fasta file. If `genome2` is specified, blastn is ran on the fasta file against this `genome2`. Then, only reads that mapped on `genome2` are mapped on `genome1`. If `genome2` is commented, all reads of the fasta file are mapped on `genome1`.
 

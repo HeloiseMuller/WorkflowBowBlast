@@ -104,13 +104,25 @@ function func_bowtie2 {
 	fi
 	rm $dir/Coverage/${samples}_trimmed_vs_${species}_*paired_sorted.bam
 
-	echo -e "\nCalculing coverage with bedtools..."
-	bedtools genomecov -ibam $dir/Coverage/${samples}_trimmed_vs_${species}_merged_sorted.bam \
-                        -g $path_species -d > $dir/Coverage/${samples}_trimmed_vs_${species}coverage_positions
-	if [ ! -z $species2 ];
-        then
-		bedtools genomecov -ibam $dir/Coverage/${samples}_trimmed_vs_${species2}_merged_sorted.bam \
-                        -g $path_species2 -d > $dir/Coverage/${samples}_trimmed_vs_${species2}coverage_positions
-	fi
+}
+
+function func_cov {
+wait $PIDbowtie2
+
+echo -e "\nCalculing coverage with bedtools..."
+bedtools genomecov -ibam $dir/Coverage/${samples}_trimmed_vs_${species}_merged_sorted.bam \
+                       -g $path_species -d > $dir/Coverage/${samples}_trimmed_vs_${species}coverage_positions
+length_species=`awk '!/^>/{l+=length($0)}END{print l}' $path_species`
+cat $dir/Coverage/${samples}_trimmed_vs_${species}_coverage_positions | awk '{sum+=$3} END {print "Average coverage of ${samples} on ${species} = ",sum/NR}' 
+cat $dir/Coverage/${samples}_trimmed_vs_${species}_coverage_positions | awk '$3!=0' | awk 'END {print "Proportion of ${species}'s genome covered by ${sample} =",NR/$length_species}' 
+
+if [ ! -z $species2 ];
+then
+	bedtools genomecov -ibam $dir/Coverage/${samples}_trimmed_vs_${species2}_merged_sorted.bam \
+                       -g $path_species2 -d > $dir/Coverage/${samples}_trimmed_vs_${species2}_coverage_positions
+	length_species2=`awk '!/^>/{l+=length($0)}END{print l}' $path_species2`
+	cat $dir/Coverage/${samples}_trimmed_vs_${species2}_coverage_positions | awk '{sum+=$3} END {print "Average coverage of ${samples} on ${species2} = ",sum/NR}' 
+	cat $dir/Coverage/${samples}_trimmed_vs_${species2}_coverage_positions | awk '$3!=0' | awk 'END {print "Proportion of ${species2}'s genome covered by ${sample} =",NR/$length_species2}' 
+fi
 
 }

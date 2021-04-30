@@ -28,7 +28,7 @@ then
 	mkdir -p $dir/trimmed_data
 	java -jar /opt/Trimmomatic-0.38/trimmomatic-0.38.jar PE \
 			-threads $threads -trimlog $dir/trimmed_data/${sample}_trimmings.log \
-			-basein $dir/$runIlumina/raw_data/$sample/*1.fq.gz \
+			-basein $rawIllumina \
 			-baseout $dir/trimmed_data/${sample}_trimmed.fq.gz \
 			LEADING:20 TRAILING:20 \
 			SLIDINGWINDOW:4:15 \
@@ -68,19 +68,22 @@ if [ $blastn = TRUE ];
 then
 	if [ ! -f $dir/trimmed_data/${sample}_cat.fasta ];
 	then
+		PIDsfasta+= #empty array to put the PID of the loop
 		#Get fasta files
+
 		for i in $dir/trimmed_data/${sample}_*.fq.gz
 		do
-			func_process_fasta $i & PIDfasta=$!
+			func_process_fasta $i &
+		       	PIDsfasta+=" $!"
 	
 		done
 
-		wait $PIDfasta
+		wait $PIDsfasta
 
 		#Add "UNPAIRED" at the end of unpaired read names to keep info during blastn
 		for i in $dir/trimmed_data/${sample}_*U.fasta
         	do
-                	base=`basename $i | cut -d "." -f1`
+			base=`basename $i | cut -d "." -f1`
                 	sed '/^>/ s/$/_UNPAIRED/g' $i > $dir/trimmed_data/${base}.fasta3
                 	mv $dir/trimmed_data/${base}.fasta3 $dir/trimmed_data/${base}.fasta
         	done

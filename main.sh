@@ -66,7 +66,7 @@ fi
 #Run blastn if needed
 if [ $blastn = TRUE ];
 then
-	if [ ! -f $dir/trimmed_data/${sample}_cat.fasta ];
+	if [ ! -f $dir/trimmed_data/${sample}_trimmed_cat.fasta ];
 	then
 		PIDsfasta+= #empty array to put the PID of the loop
 		#Get fasta files
@@ -91,10 +91,11 @@ then
 
 		#Concatenate fasta files
 		cat $dir/trimmed_data/${sample}_*.fasta > $dir/trimmed_data/${sample}_trimmed_cat.fasta
-		rm $dir/trimmed_data/${sample}_*.fasta
+		rm $dir/trimmed_data/${sample}_*U.fasta $dir/trimmed_data/${sample}_*P.fast 
 	fi
 
 	#Run blasn (on both species if there is a second one, keeping only reads in commom)
+	mkdir -p $dir/blastn
 	func_blastn $dir/trimmed_data/${sample}_trimmed_cat.fasta & PIDblastn=$!
 
 fi

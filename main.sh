@@ -46,10 +46,10 @@ else
 fi
 
 
-#Run bowtie2 if needed
+#Run bowtie2 if needed. IF Coverage also true, will run it automaticly
 if [ $bowtie2 = TRUE ];
 then
-	mkdir -p $dir/Coverage
+	mkdir -p $dir/Bowtie2
 	func_bowtie2 & PIDbowtie2=$!
 	if [ $parallel = FALSE ];
 	then    
@@ -57,6 +57,11 @@ then
 	fi
 fi
 
+#If bowtie2 has been run independly, run coverage
+if [ $bowtie2 = FALSE ] && [ $coverage = TRUE ];
+then
+	func_coverage & PIDcov=$! 
+fi
 
 #Run blastn if needed
 if [ $blastn = TRUE ];
@@ -91,5 +96,5 @@ then
 
 fi
 
-wait $PIDbowtie2 $PIDblastn
+wait $PIDbowtie2 $PIDcov $PIDblastn
 echo -e "\nEnd of the workflow"

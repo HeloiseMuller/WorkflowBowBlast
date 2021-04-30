@@ -12,6 +12,16 @@ function func_process_fasta {
 
 function func_blastn {
 
+	if [ ! -f ${path_species}.nhr ];
+	then
+	echo -e "\nRunning blast indexing on $species ..."
+	makeblastdb -in $path_species \
+		-dbtype nucl \
+		-parse_seqids \
+		-out $path_species \
+		-logfile $dir/IndexingBlast_$species.log
+	fi
+
 	#If species2 is not specified, map all the reads on species
 	if [  -z $species2 ];
 	then
@@ -22,8 +32,20 @@ function func_blastn {
                 	-max_target_seqs 2 \
                 	-out $dir/blastn/${sample}_vs_${species}.txt \
                 	-num_threads ${threads_blastn}
-	else
-		#If species2 isspecified, map on species2 first, then take only the reads that mapped to map on species
+	
+	#If species2 is specified, map on species2 first, then take only the reads that mapped to map on species
+	else	
+	        if [ ! -f ${path_species2}.nhr ];
+	        then
+        	echo -e "\nRunning blast indexing on $species2 ..."
+        	makeblastdb -in $path_species2 \
+                	-dbtype nucl \
+                	-parse_seqids \
+                	-out $path_species \
+                	-logfile $dir/IndexingBlast_$species2.log
+        	fi
+
+		
 		echo -e "\nblastn of all the reads of ${sample} on ${species2}"
 		blastn -query $dir/trimmed_data/${sample}_trimmed_cat.fasta \
 			-db $path_species2 \
@@ -50,8 +72,8 @@ function func_blastn {
 function func_bowtie2 {
 	if [ ! -f ${path_species}.bt2 ];
         then
-                echo -e "\nIndex $species ..."
-                /opt/bowtie2-2.3.4.2/bowtie2-build --threads $threads $path_species $path_species
+                echo -e "\nBowtie2 indexing on $species ..."
+                /opt/bowtie2-2.3.4.2/bowtie2-build --threads $threads $path_species $path_species >> $dir/bowtie2Indexing.out
         fi
 
         echo -e "\nRunning bowtie2 on $species ..."
@@ -71,8 +93,8 @@ function func_bowtie2 {
         then
                 if [ ! -f ${path_species2}.bt2 ];
                 then
-                        echo -e "\nIndex $species2 ..."
-                        /opt/bowtie2-2.3.4.2/bowtie2-build --threads $threads $path_species2 $path_species2
+                        echo -e "\nBowtie2 indexing on $species2 ..."
+                        /opt/bowtie2-2.3.4.2/bowtie2-build --threads $threads $path_species2 $path_species2 >> $dir/bowtie2Indexing.out
                 fi
 
                 echo -e "\nRunning bowtie2 on $species2 ..."
@@ -92,8 +114,10 @@ function func_bowtie2 {
 	for i in $dir/Bowtie2/${sample}*.sam
 	do
 		base=`basename $i | cut -d "." -f1`
-		/opt/samtools-1.9/bin/samtools view -bh $i | /opt/samtools-1.9/bin/samtools sort -o $dir/Bowtie2/${base}_sorted.bam
+		/opt/samtools-1.9/bin/samtools view -bh $i > $dir/Bowtie2/${base}.bam 
 		rm $i
+		/opt/samtools-1.9/bin/samtools sort  $dir/Bowtie2/${base}.bam -o $dir/Bowtie2/${base}_sorted.bam
+		rm  $dir/Bowtie2/${base}.bam
 	done
 
 	echo -e "\nMerge paired and unpaired"

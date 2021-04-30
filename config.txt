@@ -19,6 +19,7 @@ species2=Ctyphae #no dot i species name
 integrity=FALSE
 trimmomatic=TRUE
 bowtie2=FALSE
+coverage=FALSE
 blastn=FALSE
 parallel=FALSE
 

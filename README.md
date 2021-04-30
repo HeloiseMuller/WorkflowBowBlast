@@ -1,6 +1,6 @@
 # WorkflowBowBlast
 
-WorkflowBowBlast runs automaticaly several tools to process raw Illumina reads, such as trimmomatic, bowtie2 and blastn.
+WorkflowBowBlast runs automaticaly several tools to process raw Illumina reads, such as trimmomatic, bowtie2, bedtools genomecov and blastn.
 
 # 1) Installation
 
@@ -40,9 +40,11 @@ species2=genome2 #no dot i species name
 integrity=TRUE
 trimmomatic=TRUE
 bowtie2=TRUE
+coverage=TRUE
 blastn=TRUE
+parallele=TRUE
 
-#Number of threads to use (even number)
+#Number of threads to use (even number if parallel=TRUE)
 threads=20
 
 
@@ -61,7 +63,7 @@ threads=20
 
 `path_species2=/home/user/ref/genome2.fasta` is the path of a reference genome of another species of interest. The name of this other species used in the outputs is `$species2`. `$species2` cannot contains any dots. This second species should be used if one wants to look for chimeric reads between `$species` and `$species2`. If not, comment these options.
 
-`integrity`, `trimmomatic`, `bowtie2` and `blastn` are the tools WorkflowBowBlast can run. They are detailed with more details thereafter. Set TRUE to run, FALSE to ignore them. `parallele=TRUE` allows WorkflowBowBlast to run bowtie2 and blastn at the same time.
+`integrity`, `trimmomatic`, `bowtie2`, `coverage` and `blastn` are the tools WorkflowBowBlast can run. They are detailed into more details thereafter. Set TRUE to run, FALSE to ignore them. `parallele=TRUE` allows WorkflowBowBlast to run bowtie2 and blastn at the same time.
 
 `threads=20` set the total number of threads to use. If `bowtie2=TRUE` and `blastn=TRUE`, `threads` will be split between them if they run at the same time.
 
@@ -78,6 +80,10 @@ This option runs trimmomatic on the raw sequencing reads. For the following, one
 ### Bowtie2
 
 This option runs bowtie2 on the trimmed reads against `genome`. If `genome2` is specified, it also run bowtie2 on this genome independently. After bowtie2, the resulting sam files are turn into sorted bam files and merged together. Bedtools genomecov is then ran in order to get the coverage at each position of `genome` and `genome2`, if specified.
+
+### Coverage
+
+This option runs bedtools genomecov on the output(s) of bowtie2. The output is a three colomns file, contening the sequencing depth at each position of the genome. Coverage also automatically calcluate the average sequencing depth over the genome and the percentage of genome covered at least once by the Illumina reads.
 
 ### Blastn
 

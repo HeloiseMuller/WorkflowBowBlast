@@ -58,12 +58,12 @@ function func_bowtie2 {
         /opt/bowtie2-2.3.4.2/bowtie2 -x $path_species \
                 -1 $dir/trimmed_data/${sample}_trimmed_1P.fq.gz \
                 -2 $dir/trimmed_data/${sample}_trimmed_2P.fq.gz \
-                -S $dir/Coverage/${sample}_trimmed_vs_${species}_paired.sam \
+                -S $dir/Bowtie2/${sample}_trimmed_vs_${species}_paired.sam \
                 --threads ${threads_bowtie2}
 
         /opt/bowtie2-2.3.4.2/bowtie2 -x $path_species \
                         -U $dir/trimmed_data/${sample}_trimmed_1U.fq.gz,$dir/trimmed_data/${sample}_trimmed_2U.fq.gz \
-                        -S $dir/Coverage/${sample}_trimmed_vs_${species}_unpaired.sam \
+                        -S $dir/Bowtie2/${sample}_trimmed_vs_${species}_unpaired.sam \
                         --threads ${threads_bowtie2}
 
 
@@ -79,38 +79,44 @@ function func_bowtie2 {
                 /opt/bowtie2-2.3.4.2/bowtie2 -x $path_species2 \
                 -1 $dir/trimmed_data/${sample}_trimmed_1P.fq.gz \
                 -2 $dir/trimmed_data/${sample}_trimmed_2P.fq.gz \
-                -S $dir/Coverage/${sample}_trimmed_${species2}_paired.sam \
+                -S $dir/Bowtie2/${sample}_trimmed_${species2}_paired.sam \
                 --threads ${threads_bowtie2}
 
                 /opt/bowtie2-2.3.4.2/bowt${sample}_ie2 -x $path_species2 \
                         -U $dir/trimmed_data/${sample}_trimmed_1U.fq.gz,$dir/trimmed_data/${sample}_trimmed_2U.fq.gz \
-                        -S $dir/Coverage/${sample}_trimmed_${species2}_unpaired.sam \
+                        -S $dir/Bowtie2/${sample}_trimmed_${species2}_unpaired.sam \
                         --threads ${threads_bowtie2}
         fi
 
 	echo -e "\nTurn sam files into sort'ed bam files"
-	for i in $dir/Coverage/${sample}*.sam
+	for i in $dir/Bowtie2/${sample}*.sam
 	do
 		base=`basename $i | cut -d "." -f1`
-		samtools view -bh $i | samtools sort -o $dir/Coverage/${base}_sorted.bam
+		samtools view -bh $i | samtools sort -o $dir/Bowtie2/${base}_sorted.bam
 		rm $i
 	done
 
 	echo -e "\nMerge paired and unpaired"
-	samtools merge $dir/Coverage/${samples}_trimmed_vs_${species}_merged_sorted.bam $dir/Coverage/${samples}_trimmed_vs_${species}_*_sorted.bam
+	samtools merge $dir/Bowtie2/${samples}_trimmed_vs_${species}_merged_sorted.bam $dir/Bowtie2/${samples}_trimmed_vs_${species}_*_sorted.bam
 	if [ ! -z $species2 ];
         then
-	        samtools merge $dir/Coverage/${samples}_trimmed_vs_${species2}_merged_sorted.bam $dir/Coverage/${samples}_trimmed_vs_${species2}_*_sorted.bam
+	        samtools merge $dir/Bowtie2/${samples}_trimmed_vs_${species2}_merged_sorted.bam $dir/Bowtie2/${samples}_trimmed_vs_${species2}_*_sorted.bam
 	fi
-	rm $dir/Coverage/${samples}_trimmed_vs_${species}_*paired_sorted.bam
+	rm $dir/Bowtie2/${samples}_trimmed_vs_${species}_*paired_sorted.bam
+	
+	if [ $coverage = TRUE ]:
+	then
+		func_cov
+	fi
 
 }
 
 function func_cov {
-wait $PIDbowtie2
+
+mkdir -p $dir/Coverage
 
 echo -e "\nCalculing coverage with bedtools..."
-bedtools genomecov -ibam $dir/Coverage/${samples}_trimmed_vs_${species}_merged_sorted.bam \
+bedtools genomecov -ibam $dir/Bowtie2/${samples}_trimmed_vs_${species}_merged_sorted.bam \
                        -g $path_species -d > $dir/Coverage/${samples}_trimmed_vs_${species}coverage_positions
 length_species=`awk '!/^>/{l+=length($0)}END{print l}' $path_species`
 cat $dir/Coverage/${samples}_trimmed_vs_${species}_coverage_positions | awk '{sum+=$3} END {print "Average coverage of ${samples} on ${species} = ",sum/NR}' 
@@ -118,7 +124,7 @@ cat $dir/Coverage/${samples}_trimmed_vs_${species}_coverage_positions | awk '$3!
 
 if [ ! -z $species2 ];
 then
-	bedtools genomecov -ibam $dir/Coverage/${samples}_trimmed_vs_${species2}_merged_sorted.bam \
+	bedtools genomecov -ibam $dir/Bowtie2/${samples}_trimmed_vs_${species2}_merged_sorted.bam \
                        -g $path_species2 -d > $dir/Coverage/${samples}_trimmed_vs_${species2}_coverage_positions
 	length_species2=`awk '!/^>/{l+=length($0)}END{print l}' $path_species2`
 	cat $dir/Coverage/${samples}_trimmed_vs_${species2}_coverage_positions | awk '{sum+=$3} END {print "Average coverage of ${samples} on ${species2} = ",sum/NR}' 

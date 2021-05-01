@@ -51,7 +51,7 @@ fi
 #Run bowtie2 if needed. IF Coverage also true, will run it automaticly
 if [ $bowtie2 = TRUE ];
 then
-	$path_bowtie2 --version
+	$path_bowtie2/bowtie2 --version
 	$path_samtools --version
 	mkdir -p $dir/Bowtie2
 	func_bowtie2 & PIDbowtie2=$!

@@ -2,7 +2,7 @@
 dir=/mnt/65To/Heloise/ResistantCaterpillars
 
 #Path of the forward raw Illumina reads
-rawIlumina=/mnt/65To/Heloise/ResistantCaterpillars/X204SC21021499-Z01-F001/raw_data/SR2/SR2_EDSW210004135-1a_H3W3FDSX2_L1_1.fq.gz
+rawIllumina=/mnt/65To/Heloise/ResistantCaterpillars/X204SC21021499-Z01-F001/raw_data/SR2/SR2_EDSW210004135-1a_H3W3FDSX2_L1_1.fq.gz
 
 #Name of the sample
 sample=SR2

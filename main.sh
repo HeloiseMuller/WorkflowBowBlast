@@ -14,19 +14,21 @@ then
 	done
 	
 	echo -e "\nFasqc on raw data"
+	$path_fastqc -version
 	mkdir -p $dir/fastqc
 	for i in $dir/$runIllumina/raw_data/$sample/*.fq.gz
 	do
-		/opt/FastQC-0.11.8/fastqc $i -o $dir/fastqc
+		$path_fastqc $i -o $dir/fastqc
 	done
 fi
 
 #Run trimmomatic if needed
 if [ $trimmomatic = TRUE ];
 then
+	echo "Trimmomatic v`java -jar $path_trimmomatic PE -version`"
 	echo -e "Running trimmomatic..."
 	mkdir -p $dir/trimmed_data
-	java -jar /opt/Trimmomatic-0.38/trimmomatic-0.38.jar PE \
+	java -jar $path_trimmomatic PE \
 			-threads $threads -trimlog $dir/trimmed_data/${sample}_trimmings.log \
 			-basein $rawIllumina \
 			-baseout $dir/trimmed_data/${sample}_trimmed.fq.gz \
@@ -49,6 +51,8 @@ fi
 #Run bowtie2 if needed. IF Coverage also true, will run it automaticly
 if [ $bowtie2 = TRUE ];
 then
+	$path_bowtie2 --version
+	$path_samtools --version
 	mkdir -p $dir/Bowtie2
 	func_bowtie2 & PIDbowtie2=$!
 	if [ $parallel = FALSE ];
@@ -60,6 +64,7 @@ fi
 #If bowtie2 has been run independly, run coverage
 if [ $bowtie2 = FALSE ] && [ $coverage = TRUE ];
 then
+	$path_bedtools --version
 	func_coverage & PIDcov=$! 
 fi
 
@@ -95,6 +100,7 @@ then
 	fi
 
 	#Run blasn (on both species if there is a second one, keeping only reads in commom)
+	$path_blastn -version
 	mkdir -p $dir/blastn
 	func_blastn $dir/trimmed_data/${sample}_trimmed_cat.fasta & PIDblastn=$!
 

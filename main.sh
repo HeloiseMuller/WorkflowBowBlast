@@ -2,7 +2,8 @@
 . $1
 
 #Get functions
-. functions.sh
+path_WorkflowBowBlast=`dirname $(realpath $0)`
+. $path_WorkflowBowBlast/functions.sh
 
 #Check integrity if needed
 if [ $integrity = TRUE ];

@@ -80,13 +80,13 @@ function func_bowtie2 {
         $path_bowtie2/bowtie2 -x $path_species \
                 -1 $dir/trimmed_data/${sample}_trimmed_1P.fq.gz \
                 -2 $dir/trimmed_data/${sample}_trimmed_2P.fq.gz \
-                -S $dir/Bowtie2/${sample}_trimmed_vs_${species}_paired.sam \
-                --threads ${threads_bowtie2}
+                --threads ${threads_bowtie2} | \
+		$path_samtools view -bS -@ ${threads_bowtie2} > $dir/Bowtie2/${sample}_trimmed_vs_${species}_paired.bam
 
         $path_bowtie2/bowtie2 -x $path_species \
                         -U $dir/trimmed_data/${sample}_trimmed_1U.fq.gz,$dir/trimmed_data/${sample}_trimmed_2U.fq.gz \
-                        -S $dir/Bowtie2/${sample}_trimmed_vs_${species}_unpaired.sam \
-                        --threads ${threads_bowtie2}
+                        --threads ${threads_bowtie2} | \
+                	$path_samtools view -bS -@ ${threads_bowtie2} > $dir/Bowtie2/${sample}_trimmed_vs_${species}_unpaired.bam
 
 
         if [ ! -z $species2 ];
@@ -101,23 +101,22 @@ function func_bowtie2 {
                 $path_bowtie2/bowtie2 -x $path_species2 \
                 -1 $dir/trimmed_data/${sample}_trimmed_1P.fq.gz \
                 -2 $dir/trimmed_data/${sample}_trimmed_2P.fq.gz \
-                -S $dir/Bowtie2/${sample}_trimmed_vs_${species2}_paired.sam \
-                --threads ${threads_bowtie2}
+                --threads ${threads_bowtie2}  | \
+                $path_samtools view -bS -@ ${threads_bowtie2} > $dir/Bowtie2/${sample}_trimmed_vs_${species2}_paired.bam
 
                 $path_bowtie2/bowtie2 -x $path_species2 \
                         -U $dir/trimmed_data/${sample}_trimmed_1U.fq.gz,$dir/trimmed_data/${sample}_trimmed_2U.fq.gz \
-                        -S $dir/Bowtie2/${sample}_trimmed_vs_${species2}_unpaired.sam \
-                        --threads ${threads_bowtie2}
-        fi
+                        --threads ${threads_bowtie2} | \
+                $path_samtools view -bS -@ ${threads_bowtie2} > $dir/Bowtie2/${sample}_trimmed_vs_${species2}_unpaired.bam
+        fi 
 
-	echo -e "\nTurn sam files into sort'ed bam files"
-	for i in $dir/Bowtie2/${sample}*.sam
+	echo -e "\nSorting bam files ..."
+	unsortedBams=`ls $dir/Bowtie2/${sample}_trimmed_vs_*.bam | grep -v '_sorted.bam'`
+	for i in $unsortedBams
 	do
 		base=`basename $i | cut -d "." -f1`
-		$path_samtools view -bh $i > $dir/Bowtie2/${base}.bam 
-		rm $i
-		$path_samtools sort  $dir/Bowtie2/${base}.bam -o $dir/Bowtie2/${base}_sorted.bam
-		rm  $dir/Bowtie2/${base}.bam
+		$path_samtools sort -o dir/Bowtie2/${base}_sorted.bam -@ ${threads_bowtie2} $i
+		rm  $i
 	done
 
 	echo -e "\nMerge paired and unpaired"

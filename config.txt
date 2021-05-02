@@ -30,7 +30,7 @@ threads=20
 #Path of software to run
 path_fastqc=/opt/FastQC-0.11.8/fastqc
 path_trimmomatic=/opt/Trimmomatic-0.38/trimmomatic-0.38.jar
-path_bowtie2=/opt/bowtie2-2.3.4.2/
+path_bowtie2=/opt/bowtie2-2.3.4.2
 path_samtools=/opt/samtools-1.9/bin/samtools
 path_bedtools=/usr/bin/bedtools
 path_blastn=/usr/bin/blastn 

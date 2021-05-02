@@ -70,10 +70,10 @@ function func_blastn {
 }
 
 function func_bowtie2 {
-	if [ ! -f ${path_species}.bt2 ];
+	if [ ! -f ${path_species}.1.bt2* ];
         then
                 echo -e "\nBowtie2 indexing on $species ..."
-                $path_bowtie2/bowtie2-build --threads $threads $path_species $path_species >> $dir/bowtie2Indexing.out
+                $path_bowtie2/bowtie2-build --threads ${threads_bowtie2} $path_species $path_species >> $dir/bowtie2Indexing.out
         fi
 
         echo -e "\nRunning bowtie2 on $species ..."
@@ -91,7 +91,7 @@ function func_bowtie2 {
 
         if [ ! -z $species2 ];
         then
-                if [ ! -f ${path_species2}.bt2 ];
+                if [ ! -f ${path_species2}.1.bt2* ];
                 then
                         echo -e "\nBowtie2 indexing on $species2 ..."
                         $path_bowtie2/bowtie2-build --threads $threads $path_species2 $path_species2 >> $dir/bowtie2Indexing.out
@@ -115,7 +115,7 @@ function func_bowtie2 {
 	for i in $unsortedBams
 	do
 		base=`basename $i | cut -d "." -f1`
-		$path_samtools sort -o dir/Bowtie2/${base}_sorted.bam -@ ${threads_bowtie2} $i
+		$path_samtools sort -o $dir/Bowtie2/${base}_sorted.bam -@ ${threads_bowtie2} $i
 		rm  $i
 	done
 
@@ -123,11 +123,11 @@ function func_bowtie2 {
 	$path_samtools merge $dir/Bowtie2/${sample}_trimmed_vs_${species}_merged_sorted.bam $dir/Bowtie2/${sample}_trimmed_vs_${species}_*_sorted.bam
 	if [ ! -z $species2 ];
         then
-	        path_samtools merge $dir/Bowtie2/${sample}_trimmed_vs_${species2}_merged_sorted.bam $dir/Bowtie2/${sample}_trimmed_vs_${species2}_*_sorted.bam
+	        $path_samtools merge $dir/Bowtie2/${sample}_trimmed_vs_${species2}_merged_sorted.bam $dir/Bowtie2/${sample}_trimmed_vs_${species2}_*_sorted.bam
 	fi
-	rm $dir/Bowtie2/${sample}_trimmed_vs_${species}_*paired_sorted.bam
+	rm $dir/Bowtie2/${sample}_trimmed_vs_*paired_sorted.bam
 	
-	if [ $coverage = TRUE ]:
+	if [ $coverage = TRUE ];
 	then
 		$path_bedtools --version
 		func_cov
@@ -152,7 +152,7 @@ then
                        -g $path_species2 -d > $dir/Coverage/${sample}_trimmed_vs_${species2}_coverage_positions
 	length_species2=`awk '!/^>/{l+=length($0)}END{print l}' $path_species2`
 	cat $dir/Coverage/${sample}_trimmed_vs_${species2}_coverage_positions | awk '{sum+=$3} END {print "Average coverage of ${samples} on ${species2} = ",sum/NR}' 
-	cat $dir/Coverage/${sample}_trimmed_vs_${species2}_coverage_positions | awk '$3!=0' | awk 'END {print "Proportion of ${species2}'s genome covered by ${sample} =",NR/$length_species2}' 
+	cat $dir/Coverage/${sample}_trimmed_vs_${species2}_coverage_positions | awk '$3!=0' | awk 'END {print "Proportion of ${species2} s genome covered by ${sample} =",NR/$length_species2}' 
 fi
 
 }

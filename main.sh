@@ -1,8 +1,11 @@
+echo -e "\n
+"
 #Get varaibles from config file
 . $1
 
 #Get functions
 path_WorkflowBowBlast=`dirname $(realpath $0)`
+echo $path_WorkflowBowBlast
 . $path_WorkflowBowBlast/functions.sh
 
 #Check integrity if needed
@@ -26,7 +29,7 @@ fi
 #Run trimmomatic if needed
 if [ $trimmomatic = TRUE ];
 then
-	echo "Trimmomatic v`java -jar $path_trimmomatic PE -version`"
+	echo -e "\nTrimmomatic v`java -jar $path_trimmomatic PE -version`"
 	echo -e "Running trimmomatic..."
 	mkdir -p $dir/trimmed_data
 	java -jar $path_trimmomatic PE \
@@ -52,8 +55,9 @@ fi
 #Run bowtie2 if needed. IF Coverage also true, will run it automaticly
 if [ $bowtie2 = TRUE ];
 then
-	$path_bowtie2/bowtie2 --version
-	$path_samtools --version
+	echo -e "\n"
+	$path_bowtie2/bowtie2 --version | grep "bowtie2"
+	$path_samtools --version | grep "samtools"
 	mkdir -p $dir/Bowtie2
 	func_bowtie2 & PIDbowtie2=$!
 	if [ $parallel = FALSE ];
@@ -65,7 +69,8 @@ fi
 #If bowtie2 has been run independly, run coverage
 if [ $bowtie2 = FALSE ] && [ $coverage = TRUE ];
 then
-	$path_bedtools --version
+	echo -e "\n"
+rate	$path_bedtools --version
 	func_coverage & PIDcov=$! 
 fi
 
@@ -74,6 +79,7 @@ if [ $blastn = TRUE ];
 then
 	if [ ! -f $dir/trimmed_data/${sample}_trimmed_cat.fasta ];
 	then
+		echo -e "\n"
 		PIDsfasta+= #empty array to put the PID of the loop
 		#Get fasta files
 
@@ -97,9 +103,10 @@ then
 
 		#Concatenate fasta files
 		cat $dir/trimmed_data/${sample}_*.fasta > $dir/trimmed_data/${sample}_trimmed_cat.fasta
-		rm $dir/trimmed_data/${sample}_*U.fasta $dir/trimmed_data/${sample}_*P.fast 
+		rm $dir/trimmed_data/${sample}_*U.fasta $dir/trimmed_data/${sample}_*P.fasta 
 	fi
 
+	echo -e "\n"
 	#Run blasn (on both species if there is a second one, keeping only reads in commom)
 	$path_blastn -version
 	mkdir -p $dir/blastn

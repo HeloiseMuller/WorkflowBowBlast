@@ -1,5 +1,5 @@
-echo -e "\n
-"
+echo -e "\n"
+
 #Get varaibles from config file
 . $1
 
@@ -7,6 +7,11 @@ echo -e "\n
 path_WorkflowBowBlast=`dirname $(realpath $0)`
 echo $path_WorkflowBowBlast
 . $path_WorkflowBowBlast/functions.sh
+
+#Check executables
+echo -e "Versions of the executables:"
+func_check
+
 
 #Check integrity if needed
 if [ $integrity = TRUE ];

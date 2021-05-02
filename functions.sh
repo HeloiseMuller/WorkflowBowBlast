@@ -1,4 +1,4 @@
-function func_check {i
+function func_check {
 	set -e
 	if [ $integrity = TRUE ];
 	then

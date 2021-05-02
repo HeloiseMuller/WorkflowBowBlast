@@ -75,7 +75,7 @@ fi
 if [ $bowtie2 = FALSE ] && [ $coverage = TRUE ];
 then
 	echo -e "\n"
-	func_coverage & PIDcov=$! 
+	func_cov & PIDcov=$! 
 fi
 
 #Run blastn if needed

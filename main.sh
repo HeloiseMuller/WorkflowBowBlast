@@ -70,7 +70,6 @@ fi
 if [ $bowtie2 = FALSE ] && [ $coverage = TRUE ];
 then
 	echo -e "\n"
-rate	$path_bedtools --version
 	func_coverage & PIDcov=$! 
 fi
 
@@ -108,7 +107,6 @@ then
 
 	echo -e "\n"
 	#Run blasn (on both species if there is a second one, keeping only reads in commom)
-	$path_blastn -version
 	mkdir -p $dir/blastn
 	func_blastn $dir/trimmed_data/${sample}_trimmed_cat.fasta & PIDblastn=$!
 

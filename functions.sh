@@ -1,3 +1,30 @@
+function func_check {i
+	set -e
+	if [ $integrity = TRUE ];
+	then
+		$path_fastqc -version
+	fi
+	if [ $trimmomatic = TRUE ];
+	then
+		echo -e "\nTrimmomatic v`java -jar $path_trimmomatic PE -version`"
+	fi
+	if [ $bowtie2 = TRUE ];
+	then
+		$path_bowtie2/bowtie2 --version | grep "bowtie2"
+		$path_samtools --version | grep "samtools"
+	fi
+	if [ $coverage = TRUE ];
+	then
+		$path_bedtools --version
+	fi
+	if [ $blastn = TRUE ];
+	then
+		$path_blastn -version
+	fi
+	set +e
+}
+
+
 function func_process_fasta {
 	echo -e "\ngunzip on $i"
         gunzip -k $i

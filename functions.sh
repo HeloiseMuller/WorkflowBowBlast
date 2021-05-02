@@ -82,9 +82,9 @@ function func_blastn {
                 	-num_threads ${threads_blastn}
 
 		#extract 1st colomn where name sequences to keep | keep each read once
-		cut -f1 $dir/blastn/${sample}_vs_${species2}.txt | sort | uniq > $dir/blastn/${sample}_vs_${species2}.lst
+		cut -f1 $dir/blastn/${sample}_trimmed_vs_${species2}.txt | sort | uniq > $dir/blastn/${sample}_trimmed_vs_${species2}.lst
 		#make fasta in which keep only reads that blasted against species2
-		seqtk subseq $dir/trimmed_data/${sample}_trimmed_cat.fasta $dir/blastn/${sample}_vs_${species2}.lst > $dir/blastn/${sample}_trimmed_vs_${species2}.fasta
+		seqtk subseq $dir/trimmed_data/${sample}_trimmed_cat.fasta $dir/blastn/${sample}_trimmed_vs_${species2}.lst > $dir/blastn/${sample}_trimmed_vs_${species2}.fasta
 		echo -e "\nblastn of the reads of ${sample} that mapped on ${species} on ${species}"
 		$path_blastn -query $dir/blastn/${sample}_trimmed_vs_${species2}.fasta \
 			-db $path_species \

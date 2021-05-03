@@ -171,7 +171,7 @@ $path_bedtools genomecov -ibam $dir/Bowtie2/${sample}_trimmed_vs_${species}_merg
                        -g $path_species -d > $dir/Coverage/${sample}_trimmed_vs_${species}_coverage_positions
 length_species=`awk '!/^>/{l+=length($0)}END{print l}' $path_species`
 cat $dir/Coverage/${sample}_trimmed_vs_${species}_coverage_positions | awk '{sum+=$3} END {print "Average coverage of ${sample} on ${species} = ",sum/NR}' 
-cat $dir/Coverage/${sample}_trimmed_vs_${species}_coverage_positions | awk '$3!=0' | awk -v a=$species -v b=$sample -v length=$length_species 'END {print "Proportion of " a " genome covered by " b " =",NR/length}' 
+cat $dir/Coverage/${sample}_trimmed_vs_${species}_coverage_positions | awk '$3!=0' | awk -v a=$species -v b=$sample -v l=$length_species 'END {print "Proportion of " a " genome covered by " b " =",NR/l}' 
 
 if [ ! -z $species2 ];
 then
@@ -179,7 +179,7 @@ then
                        -g $path_species2 -d > $dir/Coverage/${sample}_trimmed_vs_${species2}_coverage_positions
 	length_species2=`awk '!/^>/{l+=length($0)}END{print l}' $path_species2`
 	cat $dir/Coverage/${sample}_trimmed_vs_${species2}_coverage_positions | awk '{sum+=$3} END {print "Average coverage of ${sample} on ${species2} = ",sum/NR}' 
-	cat $dir/Coverage/${sample}_trimmed_vs_${species2}_coverage_positions | awk '$3!=0' | awk -v a=$species2 -v b=$sample -v length=$length_species2 'END {print "Proportion of " a " genome covered by " b " =",NR/length}' 
+	cat $dir/Coverage/${sample}_trimmed_vs_${species2}_coverage_positions | awk '$3!=0' | awk -v a=$species2 -v b=$sample -v l=$length_species2 'END {print "Proportion of " a " genome covered by " b " =",NR/l}' 
 fi
 
 }

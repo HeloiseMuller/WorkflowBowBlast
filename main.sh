@@ -9,9 +9,11 @@ echo $path_WorkflowBowBlast
 . $path_WorkflowBowBlast/functions.sh
 
 #Check executables
-echo -e "Versions of the executables:"
+echo -e "\nVersions of the executables:"
 func_check
 
+#Sample
+echo -e "\nSample is $sample"
 
 #Check integrity if needed
 if [ $integrity = TRUE ];
@@ -34,7 +36,6 @@ fi
 #Run trimmomatic if needed
 if [ $trimmomatic = TRUE ];
 then
-	echo -e "\nTrimmomatic v`java -jar $path_trimmomatic PE -version`"
 	echo -e "Running trimmomatic..."
 	mkdir -p $dir/trimmed_data
 	java -jar $path_trimmomatic PE \
@@ -61,8 +62,6 @@ fi
 if [ $bowtie2 = TRUE ];
 then
 	echo -e "\n"
-	$path_bowtie2/bowtie2 --version | grep "bowtie2"
-	$path_samtools --version | grep "samtools"
 	mkdir -p $dir/Bowtie2
 	func_bowtie2 & PIDbowtie2=$!
 	if [ $parallel = FALSE ];

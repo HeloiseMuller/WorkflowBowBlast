@@ -4,6 +4,8 @@ WorkflowBowBlast runs automaticaly several tools to process raw Illumina reads, 
 
 # 1) Installation
 
+git clone https://github.com/HeloiseMuller/WorkflowBowBlast
+
 # 2) Running the workflow
 
 ## Overview

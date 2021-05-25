@@ -68,7 +68,7 @@ function func_blastn {
         	makeblastdb -in $path_species2 \
                 	-dbtype nucl \
                 	-parse_seqids \
-                	-out $path_species \
+                	-out $path_species2 \
                 	-logfile $dir/IndexingBlast_$species2.log
         	fi
 

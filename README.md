@@ -22,50 +22,53 @@ Then run the main script with
 Here is an example of config.txt
 ```
 #Directory of the project
-dir=/home/user/Project
-
-#Name of the run of Illumina
-rawIlumina=X22DC1_1.fq.gz
+dir=/home/usr/Project
+#Path of the forward raw Illumina reads
+rawIllumina=/home/usr/Project/Sequencing/X22DC1_1.fq.gz
 
 #Name of the sample
 sample=data
 
 #Reference genome of the sample
-path_species=/home/user/ref/genome1.fasta 
-species=genome1 #no dot in species name
+path_species=/home/usr/ref/genome1.fasta
+species=speciesA
 
-#Reference species of a second species
-path_species2=/home/user/ref/genome2.fasta  #Comment if does not need it
-species2=genome2 #no dot i species name
+#Reference species of a second species (comment if one does not need it)
+path_species2=/home/usr/ref/genome2.fasta
+species2=speciesB
 
 #Scripts to run
-integrity=TRUE
-trimmomatic=TRUE
-bowtie2=TRUE
-coverage=TRUE
+integrity=FALSE
+trimmomatic=FALSE
+bowtie2=FALSE
+coverage=FALSE
 blastn=TRUE
-parallele=TRUE
+parallel=FALSE
 
-#Number of threads ​
-60
-the name of the Illumina run. It needs to be in `$dir`. The raw Illumina reads needs to be organized as follow: `$dir/$runIlumina/raw_data/`to use (even number if parallel=TRUE)
+#Number of threads to use (even number)
 threads=20
 
 
-#Path of softwares to run
+#Path of software to run
+path_fastqc=/opt/FastQC-0.11.8/fastqc
+path_trimmomatic=/opt/Trimmomatic-0.38/trimmomatic-0.38.jar
+path_bowtie2=/opt/bowtie2-2.3.4.2
+path_samtools=/opt/samtools-1.9/bin/samtools
+path_bedtools=/usr/bin/bedtools
+path_blastn=/usr/bin/blastn 
 
 
 ```
 
 `dir=/home/user/Project` is the directory of your project. All the outputs will be created in this directory. 
 
-`rawIlumina=X22DC1_1.fq.gz` is the path of the raw Illumina forward reads. No need to specify the reverse reads, they need to be at the same location.
+`rawIlumina=/home/usr/Project/Sequencing/X22DC1_1.fq.gz` is the path of the raw Illumina forward reads. No need to specify the reverse reads, they need to be at the same location.
 
-`sample=data` is the name of the sample on which one wants to run the workflow. The fq.gz files need to begin with `sample` and it cannot contain any dots.
+`sample=data` is the name of the sample on which one wants to run the workflow.`sample` cannot contain any dots.
 
-`path_species=/home/user/ref/genome1.fasta` is the path of the reference genome of the Illumina reads. The name of the species used in the outputs is `$species`. `$species` cannot contains any dots
+`path_species=/home/usr/ref/genome1.fasta` is the path of the reference genome of the Illumina reads. The name of the species used in the outputs is `$species`. `$species` cannot contains any dots
 
-`path_species2=/home/user/ref/genome2.fasta` is the path of a reference genome of another species of interest. The name of this other species used in the outputs is `$species2`. `$species2` cannot contains any dots. This second species should be used if one wants to look for chimeric reads between `$species` and `$species2`. If not, comment these options.
+`path_species2=/home/usr/ref/genome2.fasta` is the path of a reference genome of another species of interest. The name of this other species used in the outputs is `$species2`. `$species2` cannot contains any dots. This second species should be used if one wants to look for chimeric reads between `$species` and `$species2`. If not, comment these options.
 
 `integrity`, `trimmomatic`, `bowtie2`, `coverage` and `blastn` are the tools WorkflowBowBlast can run. They are detailed into more details thereafter. Set TRUE to run, FALSE to ignore them. `parallele=TRUE` allows WorkflowBowBlast run blastn without waiting the end of bowtie2 and coverage.
 
